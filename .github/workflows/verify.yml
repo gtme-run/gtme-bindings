@@ -1,0 +1,42 @@
+name: verify
+on:
+  push: {branches: [main]}
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: {repository: elegant-atomics/gtme, path: gtme}
+      - uses: actions/setup-go@v5
+        with: {go-version-file: gtme/go.mod}
+      - name: build gtme
+        run: cd gtme && go build -o bin/gtme ./cmd/gtme
+      - name: verify every binding
+        run: |
+          set -euo pipefail
+          for f in */binding.yaml; do
+            id=$(awk '/^id: /{print $2; exit}' "$f")
+            echo "== $id"
+            GTME_ADAPTER_PATH="$GITHUB_WORKSPACE" ./gtme/bin/gtme adapters verify "$id"
+          done
+      - name: index hashes match content
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, subprocess, sys
+          ix = json.load(open("index.json"))
+          assert ix["version"] == 1
+          bad = []
+          for e in ix["bindings"]:
+              src = e["source"]
+              if src["url"] != "github.com/elegant-atomics/gtme-bindings":
+                  continue  # community entries hash-checked at add time
+              h = subprocess.check_output(["scripts/hash.sh", src["path"]], text=True).strip()
+              if h != e["sha256"]:
+                  bad.append(f'{e["id"]}: index {e["sha256"][:12]} != content {h[:12]}')
+          if bad:
+              print("\n".join(bad)); sys.exit(1)
+          print(f'{len(ix["bindings"])} entries, hashes consistent')
+          PY

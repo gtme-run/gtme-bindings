@@ -1,0 +1,44 @@
+{
+  "config": {"known_property": "email", "limit": 5},
+  "responses": [
+    {
+      "match": "POST /crm/v3/objects/contacts/search",
+      "status": 200,
+      "body": {
+        "total": 2,
+        "results": [
+          {
+            "id": "101",
+            "properties": {
+              "email": "ada.quill@example.test",
+              "firstname": "Ada",
+              "lastname": "Quill",
+              "jobtitle": "VP Marketing",
+              "company": "Quill & Co",
+              "lifecyclestage": "customer",
+              "hs_object_id": "101"
+            },
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-08-01T00:00:00.000Z",
+            "archived": false
+          },
+          {
+            "id": "102",
+            "properties": {
+              "email": "bo.marsh@example.test",
+              "firstname": "Bo",
+              "lastname": "Marsh",
+              "jobtitle": "Head of Growth",
+              "company": "Marshlight",
+              "lifecyclestage": "lead",
+              "hs_object_id": "102"
+            },
+            "createdAt": "2026-02-01T00:00:00.000Z",
+            "updatedAt": "2026-08-02T00:00:00.000Z",
+            "archived": false
+          }
+        ]
+      }
+    }
+  ]
+}

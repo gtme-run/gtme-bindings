@@ -1,0 +1,114 @@
+# hubspot/contact-search — source HubSpot contacts via the CRM v3 Search API,
+# filtered by one IS_KNOWN (HAS_PROPERTY) predicate.
+#
+# Why a search and not the Lists membership endpoint: the binding engine
+# issues one request template per page, and GET /crm/v3/lists/{id}/memberships
+# returns only recordIds — no email, so no identity key (SPEC §4) and the
+# plan is rejected. HubSpot's CRM search cannot filter on list membership, so
+# the caller passes the list's own membership predicate (read from
+# GET /crm/v3/lists/{id}?includeFilters=true) and the source reproduces the
+# list server-side.
+#
+# Endpoint: POST https://api.hubapi.com/crm/v3/objects/contacts/search
+# Auth:     Authorization: Bearer $HUBSPOT_ACCESS_TOKEN (private-app token)
+# Docs:     https://developers.hubspot.com/docs/api/crm/search
+#
+# Provenance: generalized from a binding authored by an agent given only
+# `gtme help --bindings`-equivalent context in a sealed evaluation; custom
+# portal properties were removed so the binding verifies against any portal.
+
+id: hubspot/contact-search
+version: 1
+role: source
+entity_type: person
+
+credentials: [HUBSPOT_ACCESS_TOKEN]
+auth:
+  type: bearer
+  env: HUBSPOT_ACCESS_TOKEN
+
+cost_estimate_usd: 0
+keep_payloads: true
+payload_ttl_days: 30
+
+config_schema:
+  type: object
+  required: [known_property]
+  additionalProperties: false
+  properties:
+    known_property:
+      type: string
+      description: Contact property that must be set (HubSpot IS_KNOWN / HAS_PROPERTY); `email` reproduces "every contact with an email".
+    per_page:
+      type: integer
+      minimum: 1
+      maximum: 200
+      default: 100
+    limit:
+      type: integer
+      minimum: 1
+      description: Stop after this many contacts (engine-enforced cap on a source).
+    base_url:
+      type: string
+      default: "https://api.hubapi.com"
+      description: Override the API host (testing).
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    email:                   { type: string }
+    first_name:              { type: string }
+    last_name:               { type: string }
+    title:                   { type: string }
+    company_name:            { type: string }
+    hubspot.contact_id:      { type: string }
+    hubspot.lifecycle_stage: { type: string }
+
+request:
+  method: POST
+  url: "{{config.base_url}}/crm/v3/objects/contacts/search"
+  body:
+    filterGroups:
+      - filters:
+          - propertyName: "{{config.known_property}}"
+            operator: HAS_PROPERTY
+    sorts:
+      - propertyName: hs_object_id
+        direction: ASCENDING
+    properties:
+      - email
+      - firstname
+      - lastname
+      - jobtitle
+      - company
+      - lifecyclestage
+
+pagination:
+  strategy: cursor
+  param: after
+  in: body
+  cursor_path: paging.next.after
+  page_size: "{{config.per_page}}"
+  size_param: limit
+  termination:
+    empty_records: true
+
+extract:
+  records: results
+  fields:
+    email:                   properties.email
+    first_name:              properties.firstname
+    last_name:               properties.lastname
+    title:                   properties.jobtitle
+    company_name:            properties.company
+    hubspot.contact_id:      id
+    hubspot.lifecycle_stage: properties.lifecyclestage
+
+errors:
+  "429": { verdict: retry, reason: "HubSpot rate limit" }
+  "5xx": { verdict: retry, reason: "HubSpot transient error" }
+
+retry:
+  max_attempts: 4
+  backoff_seconds: 2
