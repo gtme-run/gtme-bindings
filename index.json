@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "generated_at": "2026-08-30T21:52:05Z",
+  "bindings": [
+    {
+      "id": "hubspot/contact-search",
+      "description": "Source HubSpot contacts via the CRM v3 Search API, filtered by one HAS_PROPERTY predicate — reproduce a list's membership server-side; cursor pagination, standard portal properties only.",
+      "vendor": "hubspot",
+      "role": "source",
+      "entity_type": "person",
+      "provides": ["email", "first_name", "last_name", "title", "company_name", "hubspot.contact_id", "hubspot.lifecycle_stage"],
+      "credentials": ["HUBSPOT_ACCESS_TOKEN"],
+      "source": {
+        "url": "github.com/elegant-atomics/gtme-bindings",
+        "path": "hubspot-contact-search",
+        "ref": "main",
+        "sha": "bcf671b9e1df177ed24e98b58e0c132176261c78"
+      },
+      "sha256": "24880f3e61dc1cd4883a0788171d54eaf0d8424c790b14d1615253a24e4df93e",
+      "tier": "verified",
+      "since": "2026-08-30"
+    }
+  ]
+}
