@@ -11,7 +11,7 @@
       "provides": ["email", "first_name", "last_name", "title", "company_name", "hubspot.contact_id", "hubspot.lifecycle_stage"],
       "credentials": ["HUBSPOT_ACCESS_TOKEN"],
       "source": {
-        "url": "github.com/elegant-atomics/gtme-bindings",
+        "url": "github.com/gtme-run/gtme-bindings",
         "path": "hubspot-contact-search",
         "ref": "main",
         "sha": "bcf671b9e1df177ed24e98b58e0c132176261c78"

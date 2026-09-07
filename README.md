@@ -1,6 +1,6 @@
 # gtme-bindings
 
-The bindings registry for [gtme](https://github.com/elegant-atomics/gtme):
+The bindings registry for [gtme](https://github.com/gtme-run/gtme):
 an index (`index.json`) over declarative adapters, plus the **verified** set
 maintained and fixture-tested here. A binding is a directory holding one
 `binding.yaml` (validated against gtme's `spec/binding-schema.json`) and
@@ -11,7 +11,7 @@ execute code.
 
 ```
 gtme adapters search <text>
-gtme adapters add github.com/elegant-atomics/gtme-bindings/<dir>@main
+gtme adapters add github.com/gtme-run/gtme-bindings/<dir>@main
 ```
 
 `add` verifies before anything installs: schema, the fixtures run offline,
