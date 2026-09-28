@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-08-30T21:52:05Z",
+  "generated_at": "2026-09-28T03:49:41Z",
   "bindings": [
     {
       "id": "hubspot/contact-search",
@@ -8,8 +8,18 @@
       "vendor": "hubspot",
       "role": "source",
       "entity_type": "person",
-      "provides": ["email", "first_name", "last_name", "title", "company_name", "hubspot.contact_id", "hubspot.lifecycle_stage"],
-      "credentials": ["HUBSPOT_ACCESS_TOKEN"],
+      "provides": [
+        "email",
+        "first_name",
+        "last_name",
+        "title",
+        "company_name",
+        "hubspot.contact_id",
+        "hubspot.lifecycle_stage"
+      ],
+      "credentials": [
+        "HUBSPOT_ACCESS_TOKEN"
+      ],
       "source": {
         "url": "github.com/gtme-run/gtme-bindings",
         "path": "hubspot-contact-search",
@@ -19,6 +29,156 @@
       "sha256": "24880f3e61dc1cd4883a0788171d54eaf0d8424c790b14d1615253a24e4df93e",
       "tier": "verified",
       "since": "2026-08-30"
+    },
+    {
+      "id": "apollo/search",
+      "description": "Source people from Apollo's API search: masked rows (first name, title, company, has-email) at no credit cost; reveal the ones worth paying for with apollo/enrich.",
+      "vendor": "apollo",
+      "role": "source",
+      "entity_type": "person",
+      "provides": [
+        "first_name",
+        "last_name",
+        "title",
+        "company_name",
+        "apollo.id",
+        "apollo.has_email"
+      ],
+      "credentials": [
+        "APOLLO_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "apollo-search",
+        "ref": "main",
+        "sha": "fe376bcd93a31fa4e978bf2ff1a2bf9456ab7069"
+      },
+      "sha256": "e328e2f71c9e99f1c68087e4ae3d55bb8e8903ada3f9ff6587fbe71c463ef5b4",
+      "tier": "verified",
+      "since": "2026-09-27"
+    },
+    {
+      "id": "apollo/enrich",
+      "description": "Reveal one searched Apollo person by id: email, full name, LinkedIn, location and company details, one credit per match.",
+      "vendor": "apollo",
+      "role": "enrich",
+      "entity_type": "person",
+      "needs": [
+        "apollo.id"
+      ],
+      "provides": [
+        "email",
+        "email_status",
+        "first_name",
+        "last_name",
+        "full_name",
+        "title",
+        "seniority",
+        "linkedin_url",
+        "city",
+        "state",
+        "country",
+        "company_name",
+        "company_domain",
+        "company_website",
+        "company_linkedin_url",
+        "company_industry",
+        "company_employees"
+      ],
+      "credentials": [
+        "APOLLO_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "apollo-enrich",
+        "ref": "main",
+        "sha": "fe376bcd93a31fa4e978bf2ff1a2bf9456ab7069"
+      },
+      "sha256": "fbf736758a68e04882a55b6757239a26817b310afd2896680757505e4521a817",
+      "tier": "verified",
+      "since": "2026-09-27"
+    },
+    {
+      "id": "attio/assert",
+      "description": "Deliver a person to Attio by asserting (upserting) the record on email; idempotent natively, so re-delivery never duplicates.",
+      "vendor": "attio",
+      "role": "deliver",
+      "entity_type": "person",
+      "needs": [
+        "email"
+      ],
+      "credentials": [
+        "ATTIO_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "attio-assert",
+        "ref": "main",
+        "sha": "fe376bcd93a31fa4e978bf2ff1a2bf9456ab7069"
+      },
+      "sha256": "a44af77a0729b86061a9dba95b4df6c84cb0d91b084854e656a97caa535d9ecb",
+      "tier": "verified",
+      "since": "2026-09-27"
+    },
+    {
+      "id": "harvest/profile",
+      "description": "Enrich a person from their LinkedIn profile via HarvestAPI, by any LinkedIn URL shape: headline, about, location, current role and company, role history.",
+      "vendor": "harvest",
+      "role": "enrich",
+      "entity_type": "person",
+      "needs": [
+        "linkedin_url",
+        "linkedin_internal_url",
+        "linkedin_sales_nav_url"
+      ],
+      "provides": [
+        "linkedin_url",
+        "headline",
+        "about",
+        "location",
+        "current_role",
+        "current_company",
+        "follower_count",
+        "open_to_work",
+        "role_history"
+      ],
+      "credentials": [
+        "HARVEST_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "harvest-profile",
+        "ref": "main",
+        "sha": "fe376bcd93a31fa4e978bf2ff1a2bf9456ab7069"
+      },
+      "sha256": "a7669e0dd4478b11b2c85e367c9b4d98f62b5199b2276770f2768e63ae06a474",
+      "tier": "verified",
+      "since": "2026-09-27"
+    },
+    {
+      "id": "harvest/recent-posts",
+      "description": "Enrich a person with the text of their recent LinkedIn posts via HarvestAPI, at most posts_limit, for a compose step to read.",
+      "vendor": "harvest",
+      "role": "enrich",
+      "entity_type": "person",
+      "needs": [
+        "linkedin_url"
+      ],
+      "provides": [
+        "recent_posts"
+      ],
+      "credentials": [
+        "HARVEST_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "harvest-recent-posts",
+        "ref": "main",
+        "sha": "fe376bcd93a31fa4e978bf2ff1a2bf9456ab7069"
+      },
+      "sha256": "0e1202de630ad06325de5823ae0ee36c613bf61e2f766644ea49b82caddcef9f",
+      "tier": "verified",
+      "since": "2026-09-27"
     }
   ]
 }
