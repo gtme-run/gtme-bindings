@@ -28,6 +28,14 @@ is pinned (`.source.json` records the resolved commit and content hash);
   repository, fixtures required (`gtme adapters add` runs them before
   installing).
 
+An entry is a binding unless it says `kind: process`. A process entry is a
+prebuilt process adapter for logic a binding may not hold (gtme ADR-063):
+one archive per platform holding `manifest.json` and an executable `run`,
+each pinned by its sha256, built by gtme-run CI from a tagged commit.
+Process entries are verified only; `instantly/add-to-campaign` is one, built
+by gtme's own release. `gtme adapters add <id>` installs the archive for
+your platform and refuses a checksum mismatch.
+
 ## Contribute a binding
 
 1. Author it: `gtme help --bindings` prints the schema, the discovery path,
@@ -41,6 +49,15 @@ is pinned (`.source.json` records the resolved commit and content hash);
 
 Fixtures must never contain real personal data: synthesize values, keep
 real shapes.
+
+A deliver binding that declares `idempotency_scope` must name a config key
+holding a **stable identifier** of the destination: an id, an API slug, a
+file path, a URL. Never a display name the destination's owner can rename:
+the scope is where gtme's delivery dedupe lives, so a renamed campaign or
+list would become a new destination and receive everyone again (gtme
+ADR-062). Where the identifier has a shape, constrain it in
+`config_schema` (a `pattern` with a `description` saying where to find
+it), so a name fails `gtme plan` with that description.
 
 ## The content hash
 
