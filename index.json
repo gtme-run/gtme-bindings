@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-28T03:49:41Z",
+  "generated_at": "2026-09-29T20:55:17Z",
   "bindings": [
     {
       "id": "hubspot/contact-search",
@@ -179,6 +179,47 @@
       "sha256": "0e1202de630ad06325de5823ae0ee36c613bf61e2f766644ea49b82caddcef9f",
       "tier": "verified",
       "since": "2026-09-27"
+    },
+    {
+      "id": "instantly/add-to-campaign",
+      "kind": "process",
+      "description": "Add a person to an Instantly campaign, named by its id; preflights the campaign and attests each lead by re-reading it.",
+      "vendor": "instantly",
+      "role": "deliver",
+      "entity_type": "person",
+      "needs": [
+        "email"
+      ],
+      "credentials": [
+        "INSTANTLY_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme",
+        "path": "cmd/gtme-instantly",
+        "ref": "v0.7.0",
+        "sha": "8c3008cc63b9d5bea0ef2f65df4244e35ec1bbd6"
+      },
+      "tier": "verified",
+      "since": "2026-09-29",
+      "release": "v0.7.0",
+      "assets": {
+        "darwin/arm64": {
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_darwin_arm64.tar.gz",
+          "sha256": "fa52b9d12563c8bb4b8b3cfc1398988df0aaf6a6d65573bce905dd4b41e7254d"
+        },
+        "darwin/amd64": {
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_darwin_amd64.tar.gz",
+          "sha256": "fa497b7d52aac34ccb095b05660eab8b8d2b6417ceb85d90c5550734d8bef559"
+        },
+        "linux/amd64": {
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_linux_amd64.tar.gz",
+          "sha256": "f2c42e22c9451e41766d7fb3fa3d0376e2e18cbfba0573218bfd8b75877edbf3"
+        },
+        "linux/arm64": {
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_linux_arm64.tar.gz",
+          "sha256": "881564bb91f4a82e8b994f193b843a78362a45cd2c24a6b1485f28e1fc377459"
+        }
+      }
     }
   ]
 }
