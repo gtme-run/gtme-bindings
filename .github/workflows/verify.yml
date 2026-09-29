@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
-        with: {repository: elegant-atomics/gtme, path: gtme}
+        with: {repository: gtme-run/gtme, path: gtme}
       - uses: actions/setup-go@v5
         with: {go-version-file: gtme/go.mod}
       - name: build gtme
@@ -31,7 +31,7 @@ jobs:
           bad = []
           for e in ix["bindings"]:
               src = e["source"]
-              if src["url"] != "github.com/elegant-atomics/gtme-bindings":
+              if src["url"] != "github.com/gtme-run/gtme-bindings":
                   continue  # community entries hash-checked at add time
               h = subprocess.check_output(["scripts/hash.sh", src["path"]], text=True).strip()
               if h != e["sha256"]:
