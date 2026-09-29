@@ -1,0 +1,175 @@
+# harvest/post-search — source people from LinkedIn post content.
+#
+# The complement to the shipped harvest/profile: that one enriches a person you
+# already have, this one FINDS people by what they wrote. The record is the
+# post's author; the post itself rides along namespaced under `harvest.*` so a
+# downstream filter, compose or deliver step can quote the post that surfaced
+# them.
+#
+# Endpoint: GET https://api.harvestapi.io/linkedin/post-search?search=...
+# Auth:     X-API-Key header
+# Docs:     https://docs.harvestapi.io/linkedin-api-reference/post/search
+#
+# Three things worth knowing, all learned against live responses:
+#
+# 1. Author URLs arrive with LinkedIn's tracking suffix
+#    (".../in/jane-doe?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAA..."). A
+#    plain extraction path stores that raw, it fails the registry's
+#    linkedin_url normalization rule, and the engine drops the whole record —
+#    after the vendor has billed for the page. `transform: linkedin` is the
+#    engine-owned §4 classify-and-route rule that normalizes it and files it
+#    under whichever of the three linkedin_* fields the shape matches, so all
+#    three are declared in provides.
+#
+# 2. `author.info` carries the author's headline as a STRING. HarvestAPI's
+#    published OpenAPI types it as a boolean; that is a documentation error.
+#    The fallback chain below tolerates either.
+#
+# 3. Posts are deduplicated into their authors. A search returning N posts by
+#    M authors yields M records, and each author's extra posts land as
+#    additional append-only facts on the same identity — visible in
+#    `field_values`, but only the top-ranked one shows in `current_values`.
+#    If you need every post as its own row, query `field_values` directly.
+#
+# Cost: HarvestAPI's price depends on the caller's plan, so no number here is
+# correct for two different operators. Declared 0 rather than guessed — see
+# elegant-atomics/gtme#31, which proposes templating cost.amount_usd from
+# config so an operator can put their own rate on their own receipt. `per:
+# request` is the honest unit meanwhile: this endpoint bills by the page it
+# returns, and `limit` can truncate how many of those records are emitted.
+
+id: harvest/post-search
+version: 1
+role: source
+entity_type: person
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    full_name: { type: string }
+    linkedin_url: { type: string }
+    linkedin_internal_url: { type: string }
+    linkedin_sales_nav_url: { type: string }
+    harvest.author_url: { type: string }
+    harvest.author_public_id: { type: string }
+    harvest.author_profile_id: { type: string }
+    harvest.author_headline: { type: string }
+    harvest.post_id: { type: string }
+    harvest.post_url: { type: string }
+    harvest.post_content: { type: string }
+    harvest.post_posted_at: { type: string }
+    harvest.post_likes: { type: integer }
+    harvest.post_comments: { type: integer }
+    harvest.post_shares: { type: integer }
+
+config_schema:
+  type: object
+  additionalProperties: false
+  anyOf:
+    - required: [search]
+    - required: [authorKeywords]
+  properties:
+    search:
+      type: string
+      description: Keywords to search post content for (LinkedIn honours "quoted phrases")
+    authorKeywords:
+      type: string
+      description: Filter by keywords in the authors' own profiles
+    sortBy:
+      type: string
+      enum: [relevance, date]
+      default: relevance
+    postedLimit:
+      type: string
+      enum: ["24h", "week", "month"]
+      description: Recency filter applied by LinkedIn
+    scrapePostedLimit:
+      type: string
+      enum: ["1h", "24h", "week", "month", "3months", "6months", "year"]
+      description: Recency filter applied by HarvestAPI after LinkedIn returns
+    contentType:
+      type: string
+      description: "videos | images | live_videos | documents | collaborative_articles | jobs"
+    limit:
+      type: integer
+      minimum: 1
+      description: >
+        Stop after this many people. This is the spend control: the engine stops
+        paginating as soon as the cap is met, so a limit at or below one page's
+        worth costs exactly one request. Declared here because a source binding
+        with additionalProperties:false must (elegant-atomics/gtme#32).
+    base_url:
+      type: string
+      default: "https://api.harvestapi.io"
+      description: Override the API host (testing)
+
+credentials: [HARVEST_API_KEY]
+cost_estimate_usd: 0
+
+auth:
+  type: header
+  name: X-API-Key
+  env: HARVEST_API_KEY
+
+request:
+  method: GET
+  url: "{{config.base_url}}/linkedin/post-search"
+  query:
+    search: "{{config.search}}"
+    authorKeywords: "{{config.authorKeywords}}"
+    sortBy: "{{config.sortBy}}"
+    postedLimit: "{{config.postedLimit}}"
+    scrapePostedLimit: "{{config.scrapePostedLimit}}"
+    contentType: "{{config.contentType}}"
+
+pagination:
+  strategy: page
+  param: page
+  in: query
+  # This endpoint takes no page-size parameter — LinkedIn decides how many
+  # elements a page holds — so `short_page` cannot be evaluated and no
+  # `page_size` is declared. Termination is an empty page, the operator's
+  # `limit`, or `max` as a runaway guard.
+  termination:
+    empty_records: true
+  max: 10
+
+extract:
+  records: elements
+  fields:
+    full_name: author.name
+    linkedin_url: { path: author.linkedinUrl, transform: linkedin }
+    harvest.author_url: author.linkedinUrl
+    harvest.author_public_id: author.publicIdentifier
+    harvest.author_profile_id: author.profileId
+    harvest.author_headline:
+      paths:
+        - author.info
+        - author.headline
+        - author.position
+    harvest.post_id: id
+    harvest.post_url: linkedinUrl
+    harvest.post_content: content
+    harvest.post_posted_at:
+      paths:
+        - postedAt.date
+        - postedAt.postedAgoText
+    harvest.post_likes: engagement.likes
+    harvest.post_comments: engagement.comments
+    harvest.post_shares: engagement.shares
+
+errors:
+  "400":
+    verdict: fail_run
+    reason: invalid post-search parameters
+  "401":
+    verdict: fail_run
+    reason: HARVEST_API_KEY rejected
+  "429":
+    verdict: retry
+    reason: concurrency limit exceeded
+
+cost:
+  per: request
+  amount_usd: 0

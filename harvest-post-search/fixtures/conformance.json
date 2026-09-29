@@ -1,0 +1,68 @@
+{
+  "config": { "search": "\"claude code\" go-to-market", "sortBy": "relevance", "limit": 50 },
+  "responses": [
+    {
+      "match": "page=2",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "pagination": { "totalPages": 1, "totalElements": 2, "pageNumber": 2, "pageSize": 0 },
+        "elements": []
+      }
+    },
+    {
+      "match": "GET /linkedin/post-search",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "pagination": { "totalPages": 1, "totalElements": 2, "pageNumber": 1, "pageSize": 2 },
+        "elements": [
+          {
+            "id": "7400000000000000001",
+            "entityId": "7400000000000000001",
+            "shareUrn": "urn:li:activity:7400000000000000001",
+            "linkedinUrl": "https://www.linkedin.com/posts/jane-example_gtm-activity-7400000000000000001-abcd",
+            "content": "We rebuilt our outbound motion around an agent. It researches the account, drafts the sequence, and I approve. Go-to-market is becoming an operator-plus-agent job.",
+            "author": {
+              "id": "ACoAAA0000001",
+              "urn": "ACoAAA0000001",
+              "profileId": "ACoAAA0000001",
+              "publicIdentifier": "jane-example",
+              "universalName": "jane-example",
+              "name": "Jane Example",
+              "type": "person",
+              "info": "Head of Growth at Example Co",
+              "website": null,
+              "websiteLabel": null,
+              "linkedinUrl": "https://www.linkedin.com/in/jane-example?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAA0000001",
+              "avatar": { "url": "https://media.example.com/a.jpg", "width": 200, "height": 200, "expiresAt": 1790000000000 }
+            },
+            "postedAt": { "timestamp": 1756600000000, "date": "2026-08-20 14:02:11", "postedAgoShort": "1w", "postedAgoText": "1 week ago" },
+            "engagement": { "likes": 214, "comments": 37, "shares": 5, "reactions": [ { "type": "LIKE", "count": 180 }, { "type": "PRAISE", "count": 34 } ] }
+          },
+          {
+            "id": "7400000000000000002",
+            "entityId": "7400000000000000002",
+            "shareUrn": "urn:li:activity:7400000000000000002",
+            "linkedinUrl": "https://www.linkedin.com/posts/sam-sample_agents-activity-7400000000000000002-efgh",
+            "content": "The next go-to-market hire is a skill file, not a person. Here is the pipeline we shipped this week.",
+            "author": {
+              "id": "ACoAAA0000002",
+              "urn": "ACoAAA0000002",
+              "profileId": "ACoAAA0000002",
+              "publicIdentifier": "sam-sample",
+              "universalName": "sam-sample",
+              "name": "Sam Sample",
+              "type": "person",
+              "info": "Founder, revenue tooling",
+              "linkedinUrl": "https://www.linkedin.com/in/sam-sample",
+              "avatar": { "url": "https://media.example.com/b.jpg", "width": 200, "height": 200, "expiresAt": 1790000000000 }
+            },
+            "postedAt": { "timestamp": 1756500000000, "date": "2026-08-19 09:41:00", "postedAgoShort": "1w", "postedAgoText": "1 week ago" },
+            "engagement": { "likes": 0, "comments": 0, "shares": 0, "reactions": [] }
+          }
+        ]
+      }
+    }
+  ]
+}

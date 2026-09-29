@@ -220,6 +220,42 @@
           "sha256": "881564bb91f4a82e8b994f193b843a78362a45cd2c24a6b1485f28e1fc377459"
         }
       }
+    },
+    {
+      "id": "harvest/post-search",
+      "description": "Source people from LinkedIn post content via HarvestAPI post search — the record is the post's author, with the post itself carried alongside so a downstream step can quote what surfaced them; page pagination, `limit` is the spend control.",
+      "vendor": "harvest",
+      "role": "source",
+      "entity_type": "person",
+      "provides": [
+        "full_name",
+        "linkedin_url",
+        "linkedin_internal_url",
+        "linkedin_sales_nav_url",
+        "harvest.author_headline",
+        "harvest.author_profile_id",
+        "harvest.author_public_id",
+        "harvest.author_url",
+        "harvest.post_id",
+        "harvest.post_url",
+        "harvest.post_content",
+        "harvest.post_posted_at",
+        "harvest.post_likes",
+        "harvest.post_comments",
+        "harvest.post_shares"
+      ],
+      "credentials": [
+        "HARVEST_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "harvest-post-search",
+        "ref": "main",
+        "sha": "1761313a6b65bdae691471fc53715ba141fa2d15"
+      },
+      "sha256": "a8a8d753efe2bbcf45ff37ad2852ae68c3047c2e3130e8905f458c445c4e4ea7",
+      "tier": "verified",
+      "since": "2026-08-31"
     }
   ]
 }
