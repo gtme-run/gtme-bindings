@@ -196,28 +196,28 @@
       "source": {
         "url": "github.com/gtme-run/gtme",
         "path": "cmd/gtme-instantly",
-        "ref": "v0.7.0",
-        "sha": "8c3008cc63b9d5bea0ef2f65df4244e35ec1bbd6"
+        "ref": "v0.8.0",
+        "sha": "00f6bd3447b93311db9a1ed2572d9b2d11c3480e"
       },
       "tier": "verified",
       "since": "2026-09-29",
-      "release": "v0.7.0",
+      "release": "v0.8.0",
       "assets": {
         "darwin/arm64": {
-          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_darwin_arm64.tar.gz",
-          "sha256": "fa52b9d12563c8bb4b8b3cfc1398988df0aaf6a6d65573bce905dd4b41e7254d"
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.8.0/gtme-instantly_v0.8.0_darwin_arm64.tar.gz",
+          "sha256": "e2fb66f473dd81e75ded2376bf0b7d2fa58e52b6a2c08ef0303215823e7407cc"
         },
         "darwin/amd64": {
-          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_darwin_amd64.tar.gz",
-          "sha256": "fa497b7d52aac34ccb095b05660eab8b8d2b6417ceb85d90c5550734d8bef559"
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.8.0/gtme-instantly_v0.8.0_darwin_amd64.tar.gz",
+          "sha256": "1112a250b4ae57d4ea511ce8c6d604d4c350bdc5280ae3f9be8a8bb6be3e862d"
         },
         "linux/amd64": {
-          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_linux_amd64.tar.gz",
-          "sha256": "f2c42e22c9451e41766d7fb3fa3d0376e2e18cbfba0573218bfd8b75877edbf3"
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.8.0/gtme-instantly_v0.8.0_linux_amd64.tar.gz",
+          "sha256": "9cd990a56b5c1d1c5192748e14b4b6730430605b8c379309de5f0f1f7865590c"
         },
         "linux/arm64": {
-          "url": "https://github.com/gtme-run/gtme/releases/download/v0.7.0/gtme-instantly_v0.7.0_linux_arm64.tar.gz",
-          "sha256": "881564bb91f4a82e8b994f193b843a78362a45cd2c24a6b1485f28e1fc377459"
+          "url": "https://github.com/gtme-run/gtme/releases/download/v0.8.0/gtme-instantly_v0.8.0_linux_arm64.tar.gz",
+          "sha256": "5a5a455730aad9ce7d2f81e3108d855db6bc7fbe9f4baf77a27383f2d8516a7d"
         }
       }
     },
