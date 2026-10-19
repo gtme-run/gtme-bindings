@@ -1,0 +1,103 @@
+# instantly/lead — the person behind a sent email. ADR-054 traverse from
+# email_send to person: one GET per send, the lead record out, edged
+# sent_to from the send to the person. Pairs with instantly/sent-emails.
+#
+# The person is keyed on email, so a lead the ledger already knows
+# coalesces with its existing record and keeps whatever earlier runs
+# attached. A lead gtme has never seen (one uploaded to Instantly by hand)
+# is minted from what Instantly holds.
+#
+# `website` on an Instantly lead is whatever the upload put there and is
+# sometimes not the email's domain, so company_domain reads Instantly's own
+# company_domain field first. linkedin_url reads the `linkedIn` variable
+# Instantly stores in `payload` when the upload mapped a LinkedIn column;
+# leads uploaded without one simply lack it.
+#
+# Endpoint: GET https://api.instantly.ai/api/v2/leads/{id}
+# Auth:     Authorization: Bearer <INSTANTLY_API_KEY>
+# Docs:     https://developer.instantly.ai/api/v2/lead/getlead
+
+id: instantly/lead
+version: 1
+role: traverse
+from: email_send
+entity_type: person
+relation: { name: sent_to, from: parent }
+
+needs:
+  type: object
+  required: [instantly.lead_id]
+  properties:
+    instantly.lead_id: { type: string }
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    email: { type: string }
+    first_name: { type: string }
+    last_name: { type: string }
+    title: { type: string }
+    company_name: { type: string }
+    company_domain: { type: string }
+    linkedin_url: { type: string }
+    instantly.lead_id: { type: string }
+    instantly.campaign_id: { type: string }
+    instantly.status: { type: integer }
+    instantly.upload_method: { type: string }
+
+config_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    base_url:
+      type: string
+      default: "https://api.instantly.ai"
+      description: Override the API host (testing)
+
+credentials: [INSTANTLY_API_KEY]
+cost_estimate_usd: 0
+
+auth:
+  type: bearer
+  env: INSTANTLY_API_KEY
+
+request:
+  method: GET
+  url: "{{config.base_url}}/api/v2/leads/{{record.instantly.lead_id}}"
+
+extract:
+  records: "."
+  fields:
+    email: { path: email, transform: email }
+    first_name: first_name
+    last_name: last_name
+    title: job_title
+    company_name: company_name
+    company_domain: { paths: [company_domain, website], transform: domain }
+    linkedin_url: { path: payload.linkedIn, transform: linkedin }
+    instantly.lead_id: id
+    instantly.campaign_id: campaign
+    instantly.status: status
+    instantly.upload_method: upload_method
+
+errors:
+  "401":
+    verdict: fail_run
+    class: auth
+    reason: INSTANTLY_API_KEY rejected
+  "404":
+    verdict: skip
+    reason: lead no longer in Instantly
+  "429":
+    verdict: retry
+    class: rate_limit
+    reason: Instantly rate limit
+
+retry:
+  max_attempts: 3
+  backoff_seconds: 2
+
+cost:
+  per: request
+  amount_usd: 0

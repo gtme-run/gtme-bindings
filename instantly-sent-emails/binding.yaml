@@ -1,0 +1,114 @@
+# instantly/sent-emails — the emails Instantly has sent from a workspace
+# (or one campaign), newest first, as records of type email_send. The sent
+# email is its own record, not a person, because one lead receives several
+# emails over a sequence and a person-shaped source would let a later step's
+# send overwrite the first one. Filter the sends in a sql/ step (first step,
+# today, one campaign), then walk each one to its person with instantly/lead.
+#
+# The endpoint has no date or step parameter, so the binding does not
+# pretend to filter: it pages newest-first and `max` caps it at three pages
+# of 100, the newest 300 sends. That reaches back a full day for a workspace
+# sending up to a few hundred emails a day.
+#
+# Ships the email_send entity type beside it (types/email_send.json).
+#
+# Endpoint: GET https://api.instantly.ai/api/v2/emails?email_type=sent
+# Auth:     Authorization: Bearer <INSTANTLY_API_KEY>
+# Docs:     https://developer.instantly.ai/api/v2/email/listemail
+
+id: instantly/sent-emails
+version: 1
+role: source
+entity_type: email_send
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    message_id: { type: string }
+    sent_at: { type: string }
+    step: { type: string }
+    lead_email: { type: string }
+    instantly.email_id: { type: string }
+    instantly.lead_id: { type: string }
+    instantly.campaign_id: { type: string }
+    instantly.from: { type: string }
+    instantly.subject: { type: string }
+
+config_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    campaign:
+      type: string
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      description: Restrict to one campaign id (the UUID in its URL). Omit for every campaign in the workspace.
+    limit:
+      type: integer
+      minimum: 1
+      description: Stop after this many emails
+    base_url:
+      type: string
+      default: "https://api.instantly.ai"
+      description: Override the API host (testing)
+
+credentials: [INSTANTLY_API_KEY]
+cost_estimate_usd: 0
+
+auth:
+  type: bearer
+  env: INSTANTLY_API_KEY
+
+request:
+  method: GET
+  url: "{{config.base_url}}/api/v2/emails"
+  query:
+    email_type: sent
+    campaign_id: "{{config.campaign}}"
+    limit: "100"
+
+pagination:
+  strategy: cursor
+  param: starting_after
+  in: query
+  cursor_path: next_starting_after
+  page_size: 100
+  max: 3
+  termination:
+    empty_records: true
+    short_page: true
+
+extract:
+  records: items
+  fields:
+    message_id: message_id
+    sent_at: timestamp_email
+    step: step
+    lead_email: { path: lead, transform: email }
+    instantly.email_id: id
+    instantly.lead_id: lead_id
+    instantly.campaign_id: campaign_id
+    instantly.from: from_address_email
+    instantly.subject: subject
+
+errors:
+  "401":
+    verdict: fail_run
+    class: auth
+    reason: INSTANTLY_API_KEY rejected
+  "403":
+    verdict: fail_run
+    class: auth
+    reason: INSTANTLY_API_KEY lacks access to this workspace
+  "429":
+    verdict: retry
+    class: rate_limit
+    reason: Instantly rate limit
+
+retry:
+  max_attempts: 3
+  backoff_seconds: 2
+
+cost:
+  per: request
+  amount_usd: 0

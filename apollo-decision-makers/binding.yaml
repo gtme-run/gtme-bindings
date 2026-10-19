@@ -1,0 +1,123 @@
+# apollo/decision-makers — everyone Apollo knows at one account. ADR-054
+# traverse: one masked people search per parent company, each person
+# emitted and edged back with works_at, which is the edge account-level SQL
+# joins on.
+#
+# Three deliberate defaults:
+#   - No title or seniority filter. Apollo's seniority tagging is unreliable
+#     at small companies (leaders titled Owner / President / SVP are dropped
+#     by person_seniorities), so pull the whole company and rank on title
+#     text in a sql/ step. `titles` and `seniorities` are there if you want
+#     Apollo to narrow it anyway.
+#   - per_page 50. At companies under 50 people one page is the whole
+#     company and short_page ends pagination; raise it (max 100) for larger
+#     accounts.
+#   - Search by domain, so the parent company needs `company_domain`.
+#
+# Masked surface (ADR-043): api_search returns no email, no linkedin and an
+# obfuscated last name. That is deliberate — it is free, so filter on these
+# fields first and reveal with apollo/enrich only past the filter.
+#
+# Endpoint: POST https://api.apollo.io/api/v1/mixed_people/api_search
+# Auth:     X-Api-Key header
+# Docs:     https://docs.apollo.io/reference/people-api-search
+
+id: apollo/decision-makers
+version: 2
+role: traverse
+from: company
+entity_type: person
+
+relation:
+  name: works_at
+  from: record
+
+needs:
+  type: object
+  required: [company_domain]
+  properties:
+    company_domain: { type: string }
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    first_name: { type: string }
+    last_name: { type: string }
+    title: { type: string }
+    company_name: { type: string }
+    apollo.id: { type: string }
+    apollo.has_email: { type: boolean }
+
+config_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    titles:
+      type: array
+      items: { type: string }
+      description: person_titles — optional; omitted means no title filter
+    seniorities:
+      type: array
+      items: { type: string }
+      description: person_seniorities — optional; see the header on why it is off
+    per_page:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 50
+    base_url:
+      type: string
+      default: "https://api.apollo.io"
+
+credentials: [APOLLO_API_KEY]
+cost_estimate_usd: 0
+freshness_days: 30
+
+auth:
+  type: header
+  name: X-Api-Key
+  env: APOLLO_API_KEY
+
+request:
+  method: POST
+  url: "{{config.base_url}}/api/v1/mixed_people/api_search"
+  headers:
+    Cache-Control: no-cache
+  body:
+    q_organization_domains_list:
+      - "{{record.company_domain}}"
+    person_titles: "{{config.titles}}"
+    person_seniorities: "{{config.seniorities}}"
+
+pagination:
+  strategy: page
+  param: page
+  in: body
+  size_param: per_page
+  page_size: "{{config.per_page}}"
+  termination:
+    empty_records: true
+    short_page: true
+
+extract:
+  records: people
+  fields:
+    apollo.id: id
+    first_name: first_name
+    last_name: last_name_obfuscated
+    title: title
+    company_name: organization.name
+    apollo.has_email: has_email
+
+errors:
+  "429": { verdict: retry, reason: "Apollo rate limit" }
+  "5xx": { verdict: retry, reason: "Apollo transient error" }
+
+retry:
+  max_attempts: 4
+  backoff_seconds: 2
+
+cost:
+  per: record
+  amount_usd: 0

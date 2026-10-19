@@ -1,0 +1,68 @@
+{
+  "note": "Synthetic, in the shape of Apollo's masked api_search response: has_* booleans, has_direct_phone as a string or false, last_name_obfuscated, organization.has_* flags. Four people at one company, one page, so short_page ends pagination.",
+  "input": { "company_domain": "acme.com", "company_name": "Acme Inc" },
+  "config": {},
+  "responses": [
+    {
+      "match": "POST /api/v1/mixed_people/api_search",
+      "status": 200,
+      "body": {
+        "total_entries": 4,
+        "people": [
+          {
+            "id": "5f3b0c1a2d0000000000a001",
+            "first_name": "Dana",
+            "last_name_obfuscated": "R.",
+            "title": "Data Analyst",
+            "has_email": true,
+            "has_direct_phone": "Maybe: please request direct dial via people/bulk_match",
+            "has_city": true,
+            "has_state": true,
+            "has_country": true,
+            "last_refreshed_at": "2026-07-31T01:17:09.757+00:00",
+            "organization": { "name": "Acme Inc", "has_city": true, "has_country": true, "has_employee_count": true, "has_industry": true, "has_phone": true, "has_revenue": false, "has_state": true, "has_zip_code": true }
+          },
+          {
+            "id": "6a4c1d2b3e0000000000a002",
+            "first_name": "Priya",
+            "last_name_obfuscated": "N.",
+            "title": "Co-Founder & CEO",
+            "has_email": true,
+            "has_direct_phone": "Maybe: please request direct dial via people/bulk_match",
+            "has_city": true,
+            "has_state": true,
+            "has_country": true,
+            "last_refreshed_at": "2026-08-14T09:02:41.000+00:00",
+            "organization": { "name": "Acme Inc", "has_city": true, "has_country": true, "has_employee_count": true, "has_industry": true, "has_phone": true, "has_revenue": false, "has_state": true, "has_zip_code": true }
+          },
+          {
+            "id": "7b5d2e3c4f0000000000a003",
+            "first_name": "Sam",
+            "last_name_obfuscated": "K.",
+            "title": "Executive Assistant to the CEO",
+            "has_email": false,
+            "has_direct_phone": false,
+            "has_city": false,
+            "has_state": true,
+            "has_country": true,
+            "last_refreshed_at": "2026-06-02T18:40:00.000+00:00",
+            "organization": { "name": "Acme Inc", "has_city": true, "has_country": true, "has_employee_count": true, "has_industry": true, "has_phone": true, "has_revenue": false, "has_state": true, "has_zip_code": true }
+          },
+          {
+            "id": "8c6e3f4d5a0000000000a004",
+            "first_name": "Lee",
+            "last_name_obfuscated": "T.",
+            "title": "Software Engineer",
+            "has_email": true,
+            "has_direct_phone": false,
+            "has_city": true,
+            "has_state": true,
+            "has_country": true,
+            "last_refreshed_at": "2026-05-20T11:11:11.000+00:00",
+            "organization": { "name": "Acme Inc", "has_city": true, "has_country": true, "has_employee_count": true, "has_industry": true, "has_phone": true, "has_revenue": false, "has_state": true, "has_zip_code": true }
+          }
+        ]
+      }
+    }
+  ]
+}

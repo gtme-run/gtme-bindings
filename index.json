@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-29T20:55:17Z",
+  "generated_at": "2026-10-19T16:45:00Z",
   "bindings": [
     {
       "id": "hubspot/contact-search",
@@ -256,6 +256,101 @@
       "sha256": "a8a8d753efe2bbcf45ff37ad2852ae68c3047c2e3130e8905f458c445c4e4ea7",
       "tier": "verified",
       "since": "2026-08-31"
+    },
+    {
+      "id": "apollo/decision-makers",
+      "description": "Traverse a company to everyone Apollo's masked people search knows there (works_at), by domain, at no credit cost; no title or seniority filter unless you set one. Reveal the ones worth paying for with apollo/enrich.",
+      "vendor": "apollo",
+      "role": "traverse",
+      "entity_type": "person",
+      "needs": [
+        "company_domain"
+      ],
+      "provides": [
+        "first_name",
+        "last_name",
+        "title",
+        "company_name",
+        "apollo.id",
+        "apollo.has_email"
+      ],
+      "credentials": [
+        "APOLLO_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "apollo-decision-makers",
+        "ref": "main",
+        "sha": "1eaad466963138608d2cad6028f1ff9b5f21ae1a"
+      },
+      "sha256": "a002f5363b0012df1bbac6a8dd7125c997ae07440ba01c2bce2496c529288c4d",
+      "tier": "verified",
+      "since": "2026-10-19"
+    },
+    {
+      "id": "instantly/sent-emails",
+      "description": "Source the emails Instantly has sent, newest first, from a workspace or one campaign, as email_send records (type shipped with the binding); filter by step or day in SQL, then reach each lead with instantly/lead.",
+      "vendor": "instantly",
+      "role": "source",
+      "entity_type": "email_send",
+      "provides": [
+        "message_id",
+        "sent_at",
+        "step",
+        "lead_email",
+        "instantly.email_id",
+        "instantly.lead_id",
+        "instantly.campaign_id",
+        "instantly.from",
+        "instantly.subject"
+      ],
+      "credentials": [
+        "INSTANTLY_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "instantly-sent-emails",
+        "ref": "main",
+        "sha": "1eaad466963138608d2cad6028f1ff9b5f21ae1a"
+      },
+      "sha256": "8d12f5f0a3be972fcde66fcb1c3bc9f87f8cba0d9b872a67092938ecf264819d",
+      "tier": "verified",
+      "since": "2026-10-19"
+    },
+    {
+      "id": "instantly/lead",
+      "description": "Traverse a sent email to its Instantly lead as a person (sent_to): email, name, title, company, domain and LinkedIn as the upload stored them.",
+      "vendor": "instantly",
+      "role": "traverse",
+      "entity_type": "person",
+      "needs": [
+        "instantly.lead_id"
+      ],
+      "provides": [
+        "email",
+        "first_name",
+        "last_name",
+        "title",
+        "company_name",
+        "company_domain",
+        "linkedin_url",
+        "instantly.lead_id",
+        "instantly.campaign_id",
+        "instantly.status",
+        "instantly.upload_method"
+      ],
+      "credentials": [
+        "INSTANTLY_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "instantly-lead",
+        "ref": "main",
+        "sha": "1eaad466963138608d2cad6028f1ff9b5f21ae1a"
+      },
+      "sha256": "1080656388ce0a7428a6c306efc909b3ef7d42510d7ddbdb97ec8bbc04a9a60f",
+      "tier": "verified",
+      "since": "2026-10-19"
     }
   ]
 }

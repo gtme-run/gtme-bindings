@@ -1,0 +1,45 @@
+{
+  "entity_type": "email_send",
+  "version": 1,
+  "kind": "subject",
+  "description": "One email a sending tool actually sent to one lead: what a pipeline finds and traverses from to reach the person it went to (instantly/lead), never the target of a deliver step. Keyed on the lead's address plus the send time, since a sent email has no platform-public URL and a vendor's message id is never a tier (SPEC.md §4). Seeded by instantly/sent-emails.",
+  "identity": [
+    { "hash": ["lead_email", "sent_at"], "prefix": "nh:" }
+  ],
+  "fields": [
+    {
+      "name": "lead_email",
+      "tier": "identity",
+      "type": "string",
+      "format": "email",
+      "normalization": "email",
+      "description": "The address the email was sent to. First component of the key; a lead gets each send once.",
+      "example": "jane.doe@acme.com"
+    },
+    {
+      "name": "sent_at",
+      "tier": "identity",
+      "type": "string",
+      "format": "date-time",
+      "normalization": "trim",
+      "description": "When the email left, RFC3339 as the vendor reports it. Second component of the key, so the emails of one sequence to one lead stay separate records.",
+      "example": "2026-10-08T17:14:02.000Z"
+    },
+    {
+      "name": "step",
+      "tier": "core",
+      "type": "string",
+      "normalization": "trim",
+      "description": "The sequence position as the vendor labels it. Instantly writes <sequence>_<step>_<variant>, so the first email is 0_0_0; a pipeline filters first touches on the 0_0_ prefix.",
+      "example": "0_0_0"
+    },
+    {
+      "name": "message_id",
+      "tier": "core",
+      "type": "string",
+      "normalization": "trim",
+      "description": "The RFC 5322 Message-ID the email carried, angle brackets included, for matching replies and threads.",
+      "example": "<00000000-0000-4000-8000-0000000000e1@acme-outbound.com>"
+    }
+  ]
+}

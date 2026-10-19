@@ -1,0 +1,56 @@
+{
+  "note": "Synthetic, in the shape of GET /api/v2/leads/{id}: every top-level key Instantly returns, ids, names and addresses invented. payload holds the upload's variables as Instantly stores them (camelCase, strings).",
+  "input": {
+    "lead_email": "jane.doe@acme.com",
+    "sent_at": "2026-10-08T17:14:02.000Z",
+    "step": "0_0_0",
+    "instantly.lead_id": "00000000-0000-4000-8000-0000000000b1"
+  },
+  "config": {},
+  "responses": [
+    {
+      "match": "GET /api/v2/leads/",
+      "status": 200,
+      "body": {
+        "id": "00000000-0000-4000-8000-0000000000b1",
+        "timestamp_created": "2026-09-22T16:45:50.793Z",
+        "timestamp_updated": "2026-10-06T19:00:14.157Z",
+        "organization": "00000000-0000-4000-8000-0000000000a0",
+        "status": 1,
+        "email_open_count": 0,
+        "email_reply_count": 0,
+        "email_click_count": 0,
+        "company_domain": "acme.com",
+        "status_summary": {
+          "lastStep": {
+            "from": "founder@acme-outbound.com",
+            "stepID": "0_0_0",
+            "timestamp_executed": "2026-10-06T19:00:14.147Z"
+          }
+        },
+        "campaign": "00000000-0000-4000-8000-0000000000c1",
+        "email": "jane.doe@acme.com",
+        "website": "acme.com",
+        "last_name": "Doe",
+        "first_name": "Jane",
+        "company_name": "Acme",
+        "job_title": "Head of Operations",
+        "payload": {
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "companyName": "Acme",
+          "jobTitle": "Head of Operations",
+          "website": "acme.com",
+          "email": "jane.doe@acme.com",
+          "linkedIn": "http://www.linkedin.com/in/janedoe",
+          "full_name": "Jane Doe"
+        },
+        "timestamp_last_contact": "2026-10-06T19:00:14.157Z",
+        "upload_method": "manual",
+        "assigned_to": "00000000-0000-4000-8000-0000000000d1",
+        "timestamp_last_touch": "2026-10-06T19:00:14.157Z",
+        "esp_code": 1
+      }
+    }
+  ]
+}

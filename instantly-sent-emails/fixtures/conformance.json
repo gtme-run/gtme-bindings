@@ -1,0 +1,65 @@
+{
+  "note": "Synthetic, in the shape of GET /api/v2/emails?email_type=sent: every key Instantly returns per item, ids and addresses invented. Two sends (a first step and a follow-up), then the empty page a cursor request gets once the newest emails are exhausted. The empty page is listed first because match is a substring and 'starting_after=' only appears on page 2 and later.",
+  "config": {},
+  "responses": [
+    {
+      "match": "starting_after=",
+      "status": 200,
+      "body": {
+        "items": [],
+        "next_starting_after": null
+      }
+    },
+    {
+      "match": "GET /api/v2/emails",
+      "status": 200,
+      "body": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-0000000000e1",
+            "timestamp_created": "2026-10-08T17:14:02.000Z",
+            "timestamp_email": "2026-10-08T17:14:02.000Z",
+            "message_id": "<00000000-0000-4000-8000-0000000000e1@acme-outbound.com>",
+            "subject": "quick question about reporting",
+            "to_address_email_list": "jane.doe@acme.com",
+            "body": { "text": "Hi Jane, …", "html": "<p>Hi Jane, …</p>" },
+            "organization_id": "00000000-0000-4000-8000-0000000000a0",
+            "eaccount": "founder@acme-outbound.com",
+            "from_address_email": "founder@acme-outbound.com",
+            "cc_address_email_list": "",
+            "campaign_id": "00000000-0000-4000-8000-0000000000c1",
+            "lead": "jane.doe@acme.com",
+            "lead_id": "00000000-0000-4000-8000-0000000000b1",
+            "ue_type": 1,
+            "step": "0_0_0",
+            "is_unread": 0,
+            "is_focused": 1,
+            "thread_id": "99-thread-jane-0001"
+          },
+          {
+            "id": "00000000-0000-4000-8000-0000000000e2",
+            "timestamp_created": "2026-10-06T19:00:13.000Z",
+            "timestamp_email": "2026-10-06T19:00:13.000Z",
+            "message_id": "<00000000-0000-4000-8000-0000000000e2@acme-outbound.com>",
+            "subject": "Re: quick question about reporting",
+            "to_address_email_list": "bob.stone@grovelabs.io",
+            "body": { "text": "Bob, one more thought …", "html": "<p>Bob, one more thought …</p>" },
+            "organization_id": "00000000-0000-4000-8000-0000000000a0",
+            "eaccount": "founder@acme-outbound.com",
+            "from_address_email": "founder@acme-outbound.com",
+            "cc_address_email_list": "",
+            "campaign_id": "00000000-0000-4000-8000-0000000000c1",
+            "lead": "bob.stone@grovelabs.io",
+            "lead_id": "00000000-0000-4000-8000-0000000000b2",
+            "ue_type": 1,
+            "step": "0_1_0",
+            "is_unread": 0,
+            "is_focused": 1,
+            "thread_id": "99-thread-bob-0001"
+          }
+        ],
+        "next_starting_after": "00000000-0000-4000-8000-0000000000e2"
+      }
+    }
+  ]
+}
