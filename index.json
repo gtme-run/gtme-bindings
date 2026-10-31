@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-29T20:55:17Z",
+  "generated_at": "2026-10-31T00:44:07Z",
   "bindings": [
     {
       "id": "hubspot/contact-search",
@@ -97,6 +97,47 @@
       "sha256": "fbf736758a68e04882a55b6757239a26817b310afd2896680757505e4521a817",
       "tier": "verified",
       "since": "2026-09-27"
+    },
+    {
+      "id": "apollo/match-linkedin",
+      "description": "Reveal a person Apollo matches on a LinkedIn profile URL (plus name and company when present): email, full name, LinkedIn, location and company details, one credit per match; no match skips the record.",
+      "vendor": "apollo",
+      "role": "enrich",
+      "entity_type": "person",
+      "needs": [
+        "linkedin_url"
+      ],
+      "provides": [
+        "email",
+        "email_status",
+        "first_name",
+        "last_name",
+        "full_name",
+        "title",
+        "seniority",
+        "linkedin_url",
+        "city",
+        "state",
+        "country",
+        "company_name",
+        "company_domain",
+        "company_website",
+        "company_linkedin_url",
+        "company_industry",
+        "company_employees"
+      ],
+      "credentials": [
+        "APOLLO_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "apollo-match-linkedin",
+        "ref": "main",
+        "sha": "9c80fe65780a55b72713fa9eef4b9636e135b1eb"
+      },
+      "sha256": "d6099f7eef25d3ecd7864ef3d85561db2efa2c3c2c0fb000acad3f2e7bef8b4f",
+      "tier": "verified",
+      "since": "2026-10-31"
     },
     {
       "id": "attio/assert",
