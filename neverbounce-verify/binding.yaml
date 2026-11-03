@@ -1,0 +1,83 @@
+# neverbounce/verify — email verifier, one NeverBounce Single Check per record.
+# Run it AFTER the step that provides `email` (apollo/enrich) and BEFORE the
+# deliver step, then gate with a sql/filter on `neverbounce.result`.
+#
+# Why the output is `neverbounce.result` and not `email_status`: apollo/enrich
+# already provides `email_status`. A step whose provides are all current
+# cache-skips (SPEC §7), so a verifier that also provided `email_status`
+# would be skipped for every Apollo-enriched record and verify nothing.
+#
+# NeverBounce answers HTTP 200 even for its own failures (auth_failure,
+# throttle_triggered, temp_unavail), with `status` != "success" and no
+# `result`. The engine reads a missing value as absent, so those records come
+# out with no `neverbounce.result`. A filter that requires result = 'valid'
+# drops them (safe), but a bad key looks like "everything unverified" — check
+# the first run's cost and counts before trusting it.
+#
+# Endpoint: GET https://api.neverbounce.com/v4.2/single/check?key=...&email=...
+# Auth:     `key` query parameter
+# Docs:     https://developers.neverbounce.com/reference/single-check
+# Cost:     one credit per check; $0.008 at the pay-as-you-go rate ($8 per 1,000,
+#           https://www.neverbounce.com/pricing). Plan-dependent: volume tiers are lower.
+#
+# result values: valid | invalid | disposable | catchall | unknown
+
+id: neverbounce/verify
+version: 1
+role: enrich
+entity_type: person
+
+needs:
+  type: object
+  required: [email]
+  properties:
+    email: { type: string }
+
+provides:
+  type: object
+  additionalProperties: false
+  properties:
+    neverbounce.result: { type: string }
+    neverbounce.suggested_correction: { type: string }
+
+config_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    base_url:
+      type: string
+      default: "https://api.neverbounce.com"
+      description: Override the API host (testing)
+
+credentials: [NEVERBOUNCE_API_KEY]
+freshness_days: 30
+cost_estimate_usd: 0.008
+
+auth:
+  type: query
+  name: key
+  env: NEVERBOUNCE_API_KEY
+
+request:
+  method: GET
+  url: "{{config.base_url}}/v4.2/single/check"
+  query:
+    email: "{{record.email}}"
+
+extract:
+  records: "."
+  fields:
+    neverbounce.result: { path: result, transform: lower }
+    neverbounce.suggested_correction: suggested_correction
+
+errors:
+  "429": { verdict: retry, reason: "NeverBounce rate limit" }
+  "5xx": { verdict: retry, reason: "NeverBounce transient error" }
+
+retry:
+  max_attempts: 4
+  backoff_seconds: 2
+
+cost:
+  per: record
+  amount_usd: 0.008

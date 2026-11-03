@@ -1,0 +1,27 @@
+{
+  "note": "Synthetic: example.com-style identities in the response shape documented at developers.neverbounce.com/reference/single-check. Not a live recording; no real personal data.",
+  "config": {},
+  "input": {"email": "jane.doe@acme.com"},
+  "responses": [
+    {
+      "match": "jane.doe",
+      "status": 200,
+      "body": {"status": "success", "result": "valid", "flags": ["has_dns", "has_dns_mx"], "suggested_correction": "", "retry_token": "", "execution_time": 412}
+    },
+    {
+      "match": "bounce",
+      "status": 200,
+      "body": {"status": "success", "result": "invalid", "flags": ["has_dns"], "suggested_correction": "", "retry_token": "", "execution_time": 380}
+    },
+    {
+      "match": "info",
+      "status": 200,
+      "body": {"status": "success", "result": "catchall", "flags": ["has_dns", "has_dns_mx"], "suggested_correction": "", "retry_token": "", "execution_time": 901}
+    },
+    {
+      "match": "/v4.2/single/check",
+      "status": 200,
+      "body": {"status": "auth_failure", "message": "We were unable to authenticate your request.", "execution_time": 12}
+    }
+  ]
+}
