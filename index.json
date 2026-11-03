@@ -256,6 +256,29 @@
       "sha256": "a8a8d753efe2bbcf45ff37ad2852ae68c3047c2e3130e8905f458c445c4e4ea7",
       "tier": "verified",
       "since": "2026-08-31"
+    },
+    {
+      "id": "neverbounce/verify",
+      "description": "Verify one email per record with NeverBounce's Single Check API; provides neverbounce.result (valid, invalid, disposable, catchall, unknown) to gate a deliver step on.",
+      "vendor": "neverbounce",
+      "role": "enrich",
+      "entity_type": "person",
+      "provides": [
+        "neverbounce.result",
+        "neverbounce.suggested_correction"
+      ],
+      "credentials": [
+        "NEVERBOUNCE_API_KEY"
+      ],
+      "source": {
+        "url": "github.com/gtme-run/gtme-bindings",
+        "path": "neverbounce-verify",
+        "ref": "main",
+        "sha": "44bc550969fd722b6cbccb94f3cea783a9266de6"
+      },
+      "sha256": "7d5569dfcef5d7c953a7e6d4cdd5e1666b6550867e7113baa484f92846e341a7",
+      "tier": "verified",
+      "since": "2026-11-03"
     }
   ]
 }
